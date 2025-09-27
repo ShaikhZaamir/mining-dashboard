@@ -1,14 +1,21 @@
 "use client";
 
 import React from "react";
-import { demoSectors, Sector } from "../data/mockData";
+import { demoSectors } from "../data/mockData";
 
-// Create alerts based on the demo sectors
-const mockAlerts = demoSectors.map((sector, index) => ({
+type Alert = {
+    id: number;
+    location: string;
+    riskLevel: "High" | "Medium";
+    timestamp: string;
+};
+
+// Generate mock alerts from demo sectors
+const mockAlerts: Alert[] = demoSectors.map((sector, index) => ({
     id: index + 1,
     location: sector.name,
     riskLevel: sector.risk,
-    timestamp: new Date(Date.now() - index * 15 * 60 * 1000).toLocaleString(), // 15 min intervals
+    timestamp: new Date(Date.now() - index * 15 * 60 * 1000).toLocaleString(),
 }));
 
 const AlertTable: React.FC = () => {

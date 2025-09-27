@@ -1,9 +1,18 @@
 "use client";
 
 import React, { useState } from "react";
-import { MapContainer, TileLayer, Circle, Popup } from "react-leaflet";
+import {
+    MapContainer,
+    TileLayer,
+    Circle,
+    Popup,
+    MapContainerProps,
+    CircleProps,
+    TileLayerProps,
+    PopupProps,
+} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import type { LatLngExpression, LeafletEvent } from "leaflet";
+import type { LatLngExpression } from "leaflet";
 import { demoSectors, Sector } from "../data/mockData";
 
 const riskColors: Record<Sector["risk"], string> = {
@@ -29,6 +38,7 @@ const RiskMap: React.FC = () => {
                         [-24.28, -69.08],
                         [-24.26, -69.06],
                     ]}
+                    scrollWheelZoom={true}
                 >
                     <TileLayer
                         url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
@@ -50,9 +60,10 @@ const RiskMap: React.FC = () => {
                     {activeSector && (
                         <Popup
                             position={activeSector.position as LatLngExpression}
+                            closeButton={true}
                             className="custom-dark-popup"
                             eventHandlers={{
-                                remove: (_: LeafletEvent) => setActiveSector(null),
+                                remove: () => setActiveSector(null),
                             }}
                         >
                             <div className="flex flex-col gap-0.5 p-1.5 text-gray-100">
@@ -90,5 +101,3 @@ const RiskMap: React.FC = () => {
 };
 
 export default RiskMap;
-
-    

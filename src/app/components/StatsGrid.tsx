@@ -3,16 +3,23 @@
 import React, { useState } from "react";
 import StatsCard from "./StatsCard";
 
+type WeatherCondition = "Clear" | "Clouds" | "Rain" | "Snow";
+
+type Weather = {
+    temp: number;
+    condition: WeatherCondition;
+};
+
 // Demo weather data
-const demoWeather = {
+const demoWeather: Weather = {
     temp: 28,
-    condition: "Clear" as const, 
+    condition: "Clear",
 };
 
 const StatsGrid: React.FC = () => {
-    const [weather] = useState(demoWeather);
+    const [weather] = useState<Weather>(demoWeather);
 
-    const getWeatherIcon = (condition: typeof demoWeather.condition) => {
+    const getWeatherIcon = (condition: WeatherCondition) => {
         switch (condition.toLowerCase()) {
             case "clear":
                 return "☀️";

@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { MapContainer, TileLayer, Circle, Popup, MapContainerProps, CircleProps, TileLayerProps } from "react-leaflet";
+import { MapContainer, TileLayer, Circle, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import type { LatLngExpression } from "leaflet";
+import type { LatLngExpression, LeafletMouseEvent } from "leaflet";
 import { demoSectors, Sector } from "../data/mockData";
 
 const riskColors: Record<Sector["risk"], string> = {
@@ -22,32 +22,28 @@ const RiskMap: React.FC = () => {
 
             <div className="h-[500px] w-full rounded-lg overflow-hidden">
                 <MapContainer
-                    {...({
-                        center: mapCenter,
-                        zoom: 15,
-                        className: "h-full w-full",
-                        maxBounds: [
-                            [-24.28, -69.08],
-                            [-24.26, -69.06],
-                        ],
-                    } as MapContainerProps)}
+                    center={mapCenter}
+                    zoom={15}
+                    className="h-full w-full"
+                    maxBounds={[
+                        [-24.28, -69.08],
+                        [-24.26, -69.06],
+                    ]}
                 >
                     <TileLayer
-                        {...({
-                            url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-                            attribution: "Tiles &copy; Esri",
-                        } as TileLayerProps)}
+                        url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                        attribution="Tiles &copy; Esri"
                     />
 
                     {demoSectors.map((sector) => (
                         <Circle
                             key={sector.id}
-                            {...({
-                                center: sector.position as LatLngExpression,
-                                radius: sector.radius,
-                                pathOptions: { color: riskColors[sector.risk], fillOpacity: 0.5 },
-                                eventHandlers: { click: () => setActiveSector(sector) },
-                            } as CircleProps)}
+                            center={sector.position as LatLngExpression}
+                            radius={sector.radius}
+                            pathOptions={{ color: riskColors[sector.risk], fillOpacity: 0.5 }}
+                            eventHandlers={{
+                                click: () => setActiveSector(sector),
+                            }}
                         />
                     ))}
 
@@ -55,9 +51,9 @@ const RiskMap: React.FC = () => {
                         <Popup
                             position={activeSector.position as LatLngExpression}
                             className="custom-dark-popup"
-                            {...({
-                                eventHandlers: { remove: () => setActiveSector(null) },
-                            } as any)}
+                            eventHandlers={{
+                                remove: (e: LeafletMouseEvent) => setActiveSector(null),
+                            }}
                         >
                             <div className="flex flex-col gap-0.5 p-1.5 text-gray-100">
                                 <h4 className="text-sm font-semibold border-b border-gray-700 pb-0.5 mb-1">

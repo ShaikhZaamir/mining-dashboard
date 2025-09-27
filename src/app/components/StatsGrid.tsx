@@ -1,18 +1,18 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import StatsCard from "./StatsCard";
 
 // Demo weather data
 const demoWeather = {
     temp: 28,
-    condition: "Clear", // Can be "Clear", "Clouds", "Rain", "Snow"
+    condition: "Clear" as const, 
 };
 
 const StatsGrid: React.FC = () => {
-    const [weather, setWeather] = useState(demoWeather);
+    const [weather] = useState(demoWeather);
 
-    const getWeatherIcon = (condition: string) => {
+    const getWeatherIcon = (condition: typeof demoWeather.condition) => {
         switch (condition.toLowerCase()) {
             case "clear":
                 return "☀️";

@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { MapContainer, TileLayer, Circle, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import type { LatLngExpression, LeafletMouseEvent } from "leaflet";
+import type { LatLngExpression, LeafletEvent } from "leaflet";
 import { demoSectors, Sector } from "../data/mockData";
 
 const riskColors: Record<Sector["risk"], string> = {
@@ -52,7 +52,7 @@ const RiskMap: React.FC = () => {
                             position={activeSector.position as LatLngExpression}
                             className="custom-dark-popup"
                             eventHandlers={{
-                                remove: (e: LeafletMouseEvent) => setActiveSector(null),
+                                remove: (_: LeafletEvent) => setActiveSector(null),
                             }}
                         >
                             <div className="flex flex-col gap-0.5 p-1.5 text-gray-100">
@@ -90,3 +90,5 @@ const RiskMap: React.FC = () => {
 };
 
 export default RiskMap;
+
+    

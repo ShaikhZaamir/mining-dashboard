@@ -6,10 +6,6 @@ import {
     TileLayer,
     Circle,
     Popup,
-    MapContainerProps,
-    CircleProps,
-    TileLayerProps,
-    PopupProps,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import type { LatLngExpression } from "leaflet";

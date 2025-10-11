@@ -1,4 +1,4 @@
-"use client"; // <-- Add this at the very top
+"use client";
 
 import React, { ReactNode, useState } from "react";
 import {
@@ -8,10 +8,16 @@ import {
     FiBell,
     FiCpu,
     FiSettings,
+    FiBox
 } from "react-icons/fi";
 
+import StatsGrid from "./StatsGrid";
+import AlertTable from "./AlertTable";
+import RiskMapWrapper from "./RiskMapWrapper";
+import DetectionModels from "./DetectionModels";
+
 type LayoutProps = {
-    children: ReactNode;
+    children?: ReactNode;
 };
 
 const menuItems = [
@@ -20,11 +26,35 @@ const menuItems = [
     { name: "Forecasts", icon: <FiTrendingUp /> },
     { name: "Alerts", icon: <FiBell /> },
     { name: "Sensors", icon: <FiCpu /> },
+    { name: "Detection Models", icon: <FiBox /> },
     { name: "Settings", icon: <FiSettings /> },
 ];
 
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+const Layout: React.FC<LayoutProps> = () => {
     const [activeMenu, setActiveMenu] = useState("Dashboard");
+
+    // 🔹 Page switcher
+    const renderContent = () => {
+        switch (activeMenu) {
+            case "Dashboard":
+                return (
+                    <>
+                        <StatsGrid />
+                        <AlertTable />
+                        <RiskMapWrapper />
+                    </>
+                );
+            case "Detection Models":
+                return <DetectionModels />;
+
+            default:
+                return (
+                    <div className="flex items-center justify-center h-full text-gray-400">
+                        <p>{activeMenu} page is under construction 🚧</p>
+                    </div>
+                );
+        }
+    };
 
     return (
         <div className="flex h-screen bg-gray-950 text-gray-100">
@@ -63,7 +93,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                         {activeMenu}
                     </h2>
                     <div className="flex items-center gap-4">
-                        {/* System Status */}
                         <div className="flex items-center gap-2">
                             <span className="relative flex h-3 w-3">
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
@@ -74,9 +103,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     </div>
                 </header>
 
-                {/* Content Area */}
+                {/* Dynamic content area */}
                 <div className="flex-1 p-6 bg-gray-950 overflow-auto">
-                    {children}
+                    {renderContent()}
                 </div>
             </main>
         </div>

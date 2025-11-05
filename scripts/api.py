@@ -23,7 +23,7 @@ app.add_middleware(
 )
 
 # Load YOLO model once
-model_path = os.path.join(os.path.dirname(__file__), "best.pt")
+model_path = os.path.join(os.path.dirname(__file__), "Crack.pt")
 model = YOLO(model_path)
 
 

@@ -9,16 +9,32 @@ export default function RockDetection() {
     const [processing, setProcessing] = useState(false);
     const [resultImage, setResultImage] = useState<string | null>(null);
 
-    const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
-            setSelectedImage(e.target.files[0]);
+            const file = e.target.files[0];
+            setSelectedImage(file);
             setProcessing(true);
             setResultImage(null);
 
-            setTimeout(() => {
+            try {
+                const formData = new FormData();
+                formData.append("file", file);
+
+                const res = await fetch("http://127.0.0.1:8000/rock-detection", {
+                    method: "POST",
+                    body: formData,
+                });
+
+                if (!res.ok) throw new Error("Backend request failed");
+
+                const data = await res.json();
+                setResultImage(`data:image/jpeg;base64,${data.result_image}`);
+            } catch (err) {
+                console.error("Detection error:", err);
+                alert("Error detecting rocks. Check backend or console.");
+            } finally {
                 setProcessing(false);
-                setResultImage(null); // Placeholder since model not ready
-            }, 2000);
+            }
         }
     };
 

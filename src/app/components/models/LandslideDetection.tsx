@@ -8,18 +8,47 @@ export default function LandslideDetection() {
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const [processing, setProcessing] = useState(false);
     const [resultImage, setResultImage] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
-    const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
-            setSelectedImage(e.target.files[0]);
+            const file = e.target.files[0];
+            setSelectedImage(file);
             setProcessing(true);
             setResultImage(null);
+            setError(null);
 
-            // Simulate processing delay
-            setTimeout(() => {
+            try {
+                const formData = new FormData();
+                formData.append("file", file); // ✅ Must match FastAPI param name
+
+                // Use environment variable for API URL
+                const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+
+                const res = await fetch(`${API_URL}/land-detection`, {
+                    method: "POST",
+                    body: formData,
+                });
+
+                if (!res.ok) {
+                    throw new Error(`API Error: ${res.status}`);
+                }
+
+                const data = await res.json();
+
+                if (data.result_image) {
+                    setResultImage(`data:image/jpeg;base64,${data.result_image}`);
+                } else if (data.error) {
+                    setError(data.error);
+                } else {
+                    setError("No result returned from the model.");
+                }
+            } catch (err: any) {
+                console.error("Error uploading image:", err);
+                setError(err.message || "Unknown error occurred.");
+            } finally {
                 setProcessing(false);
-                setResultImage(null); // Currently no output since model not ready
-            }, 2000);
+            }
         }
     };
 
@@ -32,17 +61,14 @@ export default function LandslideDetection() {
 
             {/* Upload Panel */}
             <div className="relative border-2 border-dashed border-gray-700 rounded-2xl p-8 flex flex-col items-center justify-center gap-4 bg-gray-850 hover:bg-gray-800 transition-all duration-300 cursor-pointer group">
-                {/* Animated Icon */}
                 <div className="flex items-center justify-center w-16 h-16 bg-gray-900 rounded-full shadow-inner group-hover:scale-105 transition-transform duration-300">
                     <FiUpload className="text-4xl text-yellow-400" />
                 </div>
 
-                {/* Instructions */}
                 <p className="text-gray-400 text-center text-sm sm:text-base">
                     Drag & Drop your image here <br /> or click to select a file
                 </p>
 
-                {/* Hidden file input */}
                 <input
                     type="file"
                     accept="image/*"
@@ -50,7 +76,6 @@ export default function LandslideDetection() {
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 />
 
-                {/* Selected File Name */}
                 {selectedImage && (
                     <p className="text-yellow-400 text-sm font-medium truncate max-w-full">
                         {selectedImage.name}
@@ -59,7 +84,7 @@ export default function LandslideDetection() {
             </div>
 
             {/* Result Panel */}
-            <div className="bg-gray-900 p-4 rounded-xl border border-gray-700 min-h-[200px] flex items-center justify-center">
+            <div className="bg-gray-900 p-4 rounded-xl border border-gray-700 min-h-[200px] flex items-center justify-center flex-col gap-2">
                 {processing ? (
                     <div className="flex flex-col items-center gap-2">
                         <motion.div
@@ -71,6 +96,8 @@ export default function LandslideDetection() {
                         </motion.div>
                         <p className="text-gray-400">Processing image...</p>
                     </div>
+                ) : error ? (
+                    <p className="text-red-500">{error}</p>
                 ) : resultImage ? (
                     <img src={resultImage} alt="Detected Result" className="max-h-64 rounded-md" />
                 ) : (

@@ -20,9 +20,12 @@ export default function CrackDetection() {
 
             try {
                 const formData = new FormData();
-                formData.append("image", file);
+                formData.append("file", file);
 
-                const res = await fetch("http://127.0.0.1:8000/detect-cracks/", {
+                // Use environment variable for API URL
+                const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+
+                const res = await fetch(`${API_URL}/crack-detection`, {  // ✅ Updated endpoint
                     method: "POST",
                     body: formData,
                 });
@@ -33,8 +36,8 @@ export default function CrackDetection() {
 
                 const data = await res.json();
 
-                if (data.processed_image) {
-                    setResultImage(data.processed_image);
+                if (data.result_image) {  // ✅ Updated key to match backend
+                    setResultImage(`data:image/jpeg;base64,${data.result_image}`);
                 } else {
                     setError("No result returned from the model.");
                 }

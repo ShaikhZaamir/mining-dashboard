@@ -43,9 +43,15 @@ export default function LandslideDetection() {
                 } else {
                     setError("No result returned from the model.");
                 }
-            } catch (err: any) {
+            } catch (err: unknown) {
                 console.error("Error uploading image:", err);
-                setError(err.message || "Unknown error occurred.");
+
+                if (err instanceof Error) {
+                    setError(err.message);
+                } else {
+                    setError("Unknown error occurred.");
+                }
+
             } finally {
                 setProcessing(false);
             }

@@ -9,9 +9,8 @@ from ultralytics import YOLO
 from scipy.spatial import distance
 
 # --- Locate model file safely ---
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, "../../backend/CrackDetectionModel/Crack.pt")
-MODEL_PATH = os.path.normpath(MODEL_PATH)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+MODEL_PATH = os.path.join(BASE_DIR, "backend", "CrackDetectionModel", "Crack.pt")
 
 # --- Load YOLO model once ---
 try:

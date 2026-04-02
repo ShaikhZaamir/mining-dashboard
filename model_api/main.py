@@ -3,9 +3,9 @@ from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 
 # Import model functions
-from models.rock_detection import run_rock_detection
-from models.crack_detection import run_crack_detection
-from models.land_detection import run_land_detection  # ✅ Added
+from model_api.models.rock_detection import run_rock_detection
+from model_api.models.crack_detection import run_crack_detection
+from model_api.models.land_detection import run_land_detection
 
 app = FastAPI()
 
